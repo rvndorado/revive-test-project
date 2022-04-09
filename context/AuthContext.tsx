@@ -16,7 +16,7 @@ interface IAuthProvider {
 interface IAuthContext {
   currentUser: any;
   login: (email: string, password: string) => Promise<any>;
-  logout: () => void;
+  logout: () => Promise<any>;
 }
 
 // @ts-ignore

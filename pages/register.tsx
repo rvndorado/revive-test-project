@@ -40,8 +40,9 @@ const Register: NextPage = () => {
           Swal.fire(
             "Success",
             "You are now registered, you may now login.",
-            "success"
+            "success",
           );
+          router.push("/login");
         } catch (error: any) {
           Swal.fire(
             "Something went wrong",
