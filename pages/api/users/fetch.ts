@@ -26,7 +26,7 @@ const fetchData = async (
     batch.commit();
     return response.status(200).end();
   } catch (error: any) {
-    return response.status(400).json(error);
+    return response.status(400).json({ error: error.message });
   }
 };
 
