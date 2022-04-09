@@ -51,3 +51,23 @@ export const validateDeleteUser = (id: string) => {
 
   return schema.validate({ id });
 };
+
+export const validateRegistration = (
+  email: string,
+  password: string,
+  confirmPassword: string
+) => {
+  const schema = Joi.object({
+    email: Joi.string()
+      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+      .required(),
+    password: Joi.string()
+      .pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+      .required(),
+    confirmPassword: Joi.any().equal(Joi.ref("password")).required(),
+  });
+  return schema.validate(
+    { email, password, confirmPassword },
+    { abortEarly: false }
+  );
+};
