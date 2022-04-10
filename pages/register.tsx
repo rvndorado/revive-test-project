@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import { RegisterWrapper, RegisterForm } from "../presentationals/register";
 import { validateRegistration } from "../common/validate";
+import Head from "next/head";
 
 const Register: NextPage = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -40,7 +41,7 @@ const Register: NextPage = () => {
           Swal.fire(
             "Success",
             "You are now registered, you may now login.",
-            "success",
+            "success"
           );
           router.push("/login");
         } catch (error: any) {
@@ -57,6 +58,10 @@ const Register: NextPage = () => {
 
   return (
     <>
+      <Head>
+        <title>Test - Registration</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <RegisterWrapper>
         <h2>Test Project Register</h2>
         <RegisterForm autoComplete="off" onSubmit={handleSubmit}>
@@ -78,7 +83,8 @@ const Register: NextPage = () => {
           </Button>
         </RegisterForm>
         <span>
-          Already have an account? Click <Link href="/login">here</Link> to login
+          Already have an account? Click <Link href="/login">here</Link> to
+          login
         </span>
       </RegisterWrapper>
     </>

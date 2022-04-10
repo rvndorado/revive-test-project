@@ -6,6 +6,7 @@ import { Button, Input } from "semantic-ui-react";
 import Swal from "sweetalert2";
 import { LoginWrapper, LoginForm } from "../presentationals/login";
 import { useAuth } from "../context/AuthContext";
+import Head from "next/head";
 
 const Login: NextPage = () => {
   const { login } = useAuth();
@@ -35,6 +36,10 @@ const Login: NextPage = () => {
   };
   return (
     <>
+      <Head>
+        <title>Test - Login</title>
+        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+      </Head>
       <LoginWrapper>
         <h2>Test Project Login</h2>
         <LoginForm autoComplete="off" onSubmit={handleLogin}>
