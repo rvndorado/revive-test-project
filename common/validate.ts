@@ -8,7 +8,7 @@ export const validateNewUser = (
 ) => {
   const schema = Joi.object({
     email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "in"] } })
       .required(),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
@@ -31,7 +31,7 @@ export const validateExistingUser = (
   const schema = Joi.object({
     id: Joi.string().required(),
     email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "in"] } })
       .required(),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
@@ -59,7 +59,7 @@ export const validateRegistration = (
 ) => {
   const schema = Joi.object({
     email: Joi.string()
-      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
+      .email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "in"] } })
       .required(),
     password: Joi.string()
       .min(6)
