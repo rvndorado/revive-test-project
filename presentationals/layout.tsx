@@ -12,7 +12,8 @@ export const MainContainer = styled.main`
   flex: 1;
   flex-direction: column;
   align-items: center;
-  margin: 100px 10% 0 10%;
+  margin: 50px 10% 50px 10%;
+  padding-bottom: 50px;
 `;
 
 const Layout: FC<ILayout> = ({ children }) => {
