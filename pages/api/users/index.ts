@@ -9,14 +9,26 @@ import {
 
 const getUsers = async (request: NextApiRequest, response: NextApiResponse) => {
   try {
+    const page: any = request.query.page;
+    const offset = (parseInt(page) - 1) * 3;
     const firebase = admin.firestore();
-    const usersCollection = await firebase.collection("users").get();
+    const usersCollection = await firebase
+      .collection("users")
+      .orderBy("date", "desc")
+      .limit(3)
+      .offset(offset)
+      .get();
     const users: User[] = [];
     usersCollection.forEach((doc) => {
       const { email, first_name, last_name, avatar } = doc.data();
       users.push({ id: doc.id, email, first_name, last_name, avatar });
     });
-    return response.status(200).json(users);
+    const userCount = await firebase
+      .collection("user_count")
+      //@ts-ignore
+      .doc(process.env.count_document_id?.toString())
+      .get();
+    return response.status(200).json({users, totalCount: userCount.data()});
   } catch (error: any) {
     return response.status(400).json(error);
   }
@@ -37,7 +49,14 @@ const createUser = async (
         first_name,
         last_name,
         avatar,
+        date: admin.firestore.Timestamp.now(),
       });
+
+      await firebase
+        .collection("user_count")
+        //@ts-ignore
+        .doc(process.env.count_document_id?.toString())
+        .update("count", admin.firestore.FieldValue.increment(1));
       return response.status(200).json({ id: createUserResponse.id });
     } else {
       return response.status(400).json(error.details);
@@ -87,6 +106,11 @@ const deleteUser = async (
     const { error } = validateDeleteUser(id);
     if (!error) {
       await firebase.collection("users").doc(id).delete();
+      await firebase
+        .collection("user_count")
+        //@ts-ignore
+        .doc(process.env.count_document_id?.toString())
+        .update("count", admin.firestore.FieldValue.increment(-1));
       return response.status(200).end();
     } else {
       return response.status(400).json(error.details);
