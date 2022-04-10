@@ -1,64 +1,62 @@
-import { ChangeEvent, FC, useState } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import { Modal, Button, Image, Header, Input } from "semantic-ui-react";
-import Swal from "sweetalert2";
 import axios from "axios";
-import { IModalProps, User } from "../common/types";
-import { validateNewUser } from "../common/validate";
+import Swal from "sweetalert2";
+import { ViewModalProps, User } from "../common/types";
+import { validateExistingUser } from "../common/validate";
 import { useStore } from "../stores/userStore";
 
-const AddUserModal: FC<IModalProps> = ({ open, setOpen }) => {
+const EditUserModal: FC<ViewModalProps> = ({
+  open,
+  setOpen,
+  userDetails,
+  trigger,
+}) => {
   const [imageLink, setImageLink] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
-  const { addUser, currentPage, fetchData } = useStore();
+  const [email, setEmail] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const { updateUser } = useStore();
 
-  const handleAddUser = (event: React.SyntheticEvent<EventTarget>) => {
-    event.preventDefault();
-    //@ts-ignore
-    const email = event.target.email.value;
-    //@ts-ignore
-    const first_name = event.target.first_name.value;
-    //@ts-ignore
-    const last_name = event.target.last_name.value;
+  useEffect(() => {
+    if (open) {
+      setImageLink(userDetails.avatar);
+      setEmail(userDetails.email);
+      setFirstName(userDetails.first_name);
+      setLastName(userDetails.last_name);
+    }
+  }, [open]);
 
+  const handleEdit = () => {
     try {
-      const { error } = validateNewUser(
+      const { error } = validateExistingUser(
+        userDetails.id,
         email,
-        first_name,
-        last_name,
+        firstName,
+        lastName,
         imageLink
       );
-
       if (error) {
         let errorMessage: string[] = [];
         error.details.forEach((details) => {
           errorMessage.push(details.message);
         });
-        Swal.fire("Validation Error", errorMessage.join("\n"), "error");
+        Swal.fire("Validation Error", errorMessage.join(" , "), "error");
       } else {
         setLoading(true);
         setTimeout(async () => {
-          const createUserResponse = await axios.post("/api/users", {
+          const updatedUserDetails: User = {
+            id: userDetails.id,
             email,
-            first_name,
-            last_name,
-            avatar: imageLink,
-          });
-          const newUser: User = {
-            id: createUserResponse.data.id,
-            email,
-            first_name,
-            last_name,
+            first_name: firstName,
+            last_name: lastName,
             avatar: imageLink,
           };
-          addUser(newUser);
-          const fetchResponse = await axios.get("/api/users", {
-            params: { page: currentPage },
-          });
-          const fetchedUsers: User[] = fetchResponse.data.users;
-          const userCount: number = fetchResponse.data.totalCount.count;
-          fetchData(fetchedUsers, userCount);
+          await axios.patch("/api/users", updatedUserDetails);
+          updateUser(updatedUserDetails);
           setLoading(false);
-          Swal.fire("Success", "User Successfully Added", "success");
+          Swal.fire("Success", "User Details Successfully Updated", "success");
           setOpen(false);
         }, 1000);
       }
@@ -77,26 +75,16 @@ const AddUserModal: FC<IModalProps> = ({ open, setOpen }) => {
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         open={open}
-        trigger={<Button primary>Add User</Button>}
+        trigger={trigger}
       >
-        <Modal.Header>Add User</Modal.Header>
+        <Modal.Header>Edit User</Modal.Header>
         <Modal.Content image>
           {/* @ts-ignore */}
-          <Image
-            size="large"
-            src={
-              imageLink === ""
-                ? "https://react.semantic-ui.com/images/wireframe/image.png"
-                : imageLink
-            }
-            alt="User Image"
-          />
+          <Image size="large" src={imageLink} alt="User Image" />
           <Modal.Description style={{ width: "100%" }}>
             {/* @ts-ignore */}
             <Header>User Detail</Header>
-            <form
-              id="addUserForm"
-              onSubmit={handleAddUser}
+            <div
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -105,11 +93,11 @@ const AddUserModal: FC<IModalProps> = ({ open, setOpen }) => {
             >
               <Input
                 type="email"
-                name="email"
                 placeholder="Email"
                 label="Email"
                 style={{ width: "70%" }}
-                required
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
               />
               <Input
                 type="text"
@@ -117,7 +105,8 @@ const AddUserModal: FC<IModalProps> = ({ open, setOpen }) => {
                 placeholder="First Name"
                 label="First Name"
                 style={{ width: "70%" }}
-                required
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
               />
               <Input
                 type="text"
@@ -125,32 +114,32 @@ const AddUserModal: FC<IModalProps> = ({ open, setOpen }) => {
                 placeholder="Last Name"
                 label="Last Name"
                 style={{ width: "70%" }}
-                required
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
               />
               <Input
                 type="text"
-                name="image_link"
+                name="avatar"
                 placeholder="Avatar"
                 label="Avatar"
                 style={{ width: "70%" }}
+                required
                 value={imageLink}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
                   setImageLink(event.target.value)
                 }
-                required
               />
-            </form>
+            </div>
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
           <Button
             primary
-            form="addUserForm"
-            type="submit"
             loading={loading}
             disabled={loading}
+            onClick={handleEdit}
           >
-            Add User
+            Update User Details
           </Button>
           <Button color="red" onClick={() => setOpen(false)}>
             Close Modal
@@ -161,4 +150,4 @@ const AddUserModal: FC<IModalProps> = ({ open, setOpen }) => {
   );
 };
 
-export default AddUserModal;
+export default EditUserModal;
