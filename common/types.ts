@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface User {
   id: string;
   email: string;
@@ -8,11 +10,23 @@ export interface User {
 
 export interface IUserState {
   users: User[];
-  fetchData: (data: User[]) => void;
+  user_count: number;
+  fetchData: (data: User[], count: number) => void;
   addUser: (userData: User) => void;
+  updateUser: (userData: User) => void;
+  deleteUser: (userID: string) => void;
+  currentPage: number;
+  setCurrentPage: (pageNumber: number) => void;
 }
 
 export interface IModalProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+export interface ViewModalProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  userDetails: User;
+  trigger: ReactNode;
 }
