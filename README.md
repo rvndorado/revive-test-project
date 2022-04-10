@@ -2,33 +2,50 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+After, cloning this repository we need to setup firebase console.
+
+- You can follow this [guide](https://codinglatte.com/posts/how-to/how-to-create-a-firebase-project/) on how to setup your firebase project.
+- After setting up your firebase project, generate admin sdk keys to be used on the API end of this application. You can follow this [guide](https://medium.com/litslink/firebase-admin-sdk-basics-in-examples-ee7e009a1116) on how to generate and export sdk keys.
+- Create a `.env.local` file in the root of the solution and add the details of the exported keys ().
+
+```
+  type = <value>
+  project_id = <value>
+  private_key_id = <value>
+  private_key = {"privateKey": <value>}
+  client_email = <value>
+  client_id = <value>
+  auth_uri = <value>
+  token_uri = <value>
+  auth_provider_x509_cert_url = <value>
+  client_x509_cert_url = <value>
+```
+
+- Next would be to create a Web App on your firebase project, To do this go to `Project Settings` and on the bottom part of the page click `Add App` and select `Web`.
+- Follow thru the guide then in the end you would be provided app keys to be added to our `.env.local` as well.
+
+```
+  NEXT_PUBLIC_API_KEY = <value>
+  NEXT_PUBLIC_AUTH_DOMAIN = <value>
+  NEXT_PUBLIC_PROJECT_ID = <value>
+  NEXT_PUBLIC_STORAGE_BUCKET = <value>
+  NEXT_PUBLIC_MESSAGING_SENDER_ID = <value>
+  NEXT_PUBLIC_APP_ID = <value>
+
+```
+
+- Lastly add a reference user_count document id on `.env.local`.
+
+```
+  count_document_id = uftFc0QPeHTpiwoceUEt
+```
+
+-Run the development server:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
-
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
-
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
